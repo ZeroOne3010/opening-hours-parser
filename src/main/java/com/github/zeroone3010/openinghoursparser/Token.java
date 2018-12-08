@@ -9,13 +9,13 @@ final class Token {
   private static final Map<String, TokenType> TOKENS = new HashMap<>();
 
   static {
-    TOKENS.put("Mon", TokenType.WEEKDAY);
-    TOKENS.put("Tue", TokenType.WEEKDAY);
-    TOKENS.put("Wed", TokenType.WEEKDAY);
-    TOKENS.put("Thu", TokenType.WEEKDAY);
-    TOKENS.put("Fri", TokenType.WEEKDAY);
-    TOKENS.put("Sat", TokenType.WEEKDAY);
-    TOKENS.put("Sun", TokenType.WEEKDAY);
+    TOKENS.put("Mon", TokenType.MONDAY);
+    TOKENS.put("Tue", TokenType.TUESDAY);
+    TOKENS.put("Wed", TokenType.WEDNESDAY);
+    TOKENS.put("Thu", TokenType.THURSDAY);
+    TOKENS.put("Fri", TokenType.FRIDAY);
+    TOKENS.put("Sat", TokenType.SATURDAY);
+    TOKENS.put("Sun", TokenType.SUNDAY);
     TOKENS.put("-", TokenType.RANGE_INDICATOR);
     TOKENS.put("\\d\\d:\\d\\d", TokenType.TIME);
     TOKENS.put("\\s", TokenType.WHITE_SPACE);

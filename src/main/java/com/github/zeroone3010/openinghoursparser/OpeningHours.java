@@ -12,8 +12,15 @@ public class OpeningHours {
   // Schedule -> WeekdayExpression TimeRange MoreSchedules
   // MoreSchedules -> schedule_separator Schedule
   // MoreSchedules -> ε
-  // WeekdayExpression -> weekday WeekdayRange
-  // WeekdayRange -> range_indicator weekday
+  // WeekdayExpression -> Weekday WeekdayRange
+  // Weekday -> monday
+  // Weekday -> tuesday
+  // Weekday -> wednesday
+  // Weekday -> thursday
+  // Weekday -> friday
+  // Weekday -> saturday
+  // Weekday -> sunday
+  // WeekdayRange -> range_indicator Weekday
   // WeekdayRange -> ε
   // TimeRange -> time range_indicator time
 
@@ -24,6 +31,13 @@ public class OpeningHours {
     grammar.add(new Rule(TokenType.MORE_SCHEDULES, asList(TokenType.SCHEDULE_SEPARATOR, TokenType.SCHEDULE)));
     grammar.add(new Rule(TokenType.MORE_SCHEDULES, asList(TokenType.EMPTY)));
     grammar.add(new Rule(TokenType.WEEKDAY_EXPRESSION, asList(TokenType.WEEKDAY, TokenType.WEEKDAY_RANGE)));
+    grammar.add(new Rule(TokenType.WEEKDAY, asList(TokenType.MONDAY)));
+    grammar.add(new Rule(TokenType.WEEKDAY, asList(TokenType.TUESDAY)));
+    grammar.add(new Rule(TokenType.WEEKDAY, asList(TokenType.WEDNESDAY)));
+    grammar.add(new Rule(TokenType.WEEKDAY, asList(TokenType.THURSDAY)));
+    grammar.add(new Rule(TokenType.WEEKDAY, asList(TokenType.FRIDAY)));
+    grammar.add(new Rule(TokenType.WEEKDAY, asList(TokenType.SATURDAY)));
+    grammar.add(new Rule(TokenType.WEEKDAY, asList(TokenType.SUNDAY)));
     grammar.add(new Rule(TokenType.WEEKDAY_RANGE, asList(TokenType.RANGE_INDICATOR, TokenType.WEEKDAY)));
     grammar.add(new Rule(TokenType.WEEKDAY_RANGE, asList(TokenType.EMPTY)));
     grammar.add(new Rule(TokenType.TIME_RANGE, asList(TokenType.TIME, TokenType.RANGE_INDICATOR, TokenType.TIME)));
