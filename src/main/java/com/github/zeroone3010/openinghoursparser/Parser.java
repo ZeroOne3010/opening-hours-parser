@@ -4,30 +4,72 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.Stack;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 /**
  * A top-down LL(1) parser for an opening times grammar.
  */
-final class ParsingTable {
+final class Parser {
   private final Map<TokenType, Map<TokenType, Rule>> parsingTable;
   private final Map<TokenType, Set<TokenType>> firsts;
   private final Map<TokenType, Set<TokenType>> follows;
   private final Map<Rule, Set<TokenType>> ruleFirsts;
 
-  public ParsingTable(final List<Rule> grammar) {
+  public Parser(final List<Rule> grammar) {
     this.firsts = computeTokenFirsts(grammar);
     this.ruleFirsts = computeTokenStringFirsts(grammar);
     this.follows = computeFollows(grammar);
     this.parsingTable = computeParsingTable(grammar);
   }
 
-  public Rule getValue(final TokenType nonTerminal, final TokenType terminal) {
+  public ValidationResult validate(final List<Token> tokens) {
+    final List<TokenType> input = tokens.stream().map(Token::getType).collect(Collectors.toList());
+    if (!input.get(input.size() - 1).isEndOfInput()) {
+      input.add(TokenType.END_OF_INPUT);
+    }
+    final Stack<TokenType> stack = new Stack<>();
+    stack.push(TokenType.END_OF_INPUT);
+    stack.push(TokenType.getStartSymbol());
+    do {
+      final TokenType top = TokenType.class.cast(stack.peek());
+      final TokenType nextInput = input.get(0);
+      if (Objects.equals(top, nextInput)) {
+        if (Objects.equals(top, TokenType.END_OF_INPUT)) {
+          return new ValidationResult(true);
+        }
+        stack.pop();
+        input.remove(0);
+        continue;
+      } else if (!top.isTerminal()) {
+        stack.pop();
+        final Rule parsingTableValue = getValue(top, nextInput);
+        if (parsingTableValue == null) {
+          return new ValidationResult(false);
+        }
+        final List<TokenType> parsingTableTokens = parsingTableValue.getRight();
+        if (singletonList(TokenType.EMPTY).equals(parsingTableTokens)) {
+          continue;
+        }
+        for (int i = parsingTableTokens.size(); i > 0; i--) {
+          stack.push(parsingTableTokens.get(i - 1));
+        }
+      } else {
+        return new ValidationResult(false);
+      }
+    } while (true);
+  }
+
+
+  private Rule getValue(final TokenType nonTerminal, final TokenType terminal) {
     if (nonTerminal.isTerminal()) {
       throw new IllegalArgumentException(nonTerminal + " is not a nonterminal token");
     }
@@ -167,7 +209,7 @@ final class ParsingTable {
 
   @Override
   public String toString() {
-    return "ParsingTable{" +
+    return "Parser{" +
         "parsingTable=" + parsingTable +
         '}';
   }
