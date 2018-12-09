@@ -6,6 +6,7 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -165,6 +166,23 @@ class OpeningHoursTest {
 
     assertTrue(openingHours.validate(result).isValid());
   }
+
+  @Test
+  void sevenDaysInFinnish() {
+    final OpeningHours openingHours = new OpeningHours(Grammars.defaultGrammar(), new Locale("fi", "FI"));
+    final List<Token> tokens = openingHours.tokenize("ma 10:00-20:00, ti 11:00-20:30, ke 12:00-21:00, to 13:00-21:30, pe 14:00-22:00, la 15:00-22:30, su 16:00-23:00");
+    assertTrue(openingHours.validate(tokens).isValid());
+
+    final WeeklySchedule schedule = openingHours.compile(tokens);
+    assertEquals(new DailySchedule(LocalTime.of(10, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.MONDAY));
+    assertEquals(new DailySchedule(LocalTime.of(11, 0), LocalTime.of(20, 30)), schedule.get(DayOfWeek.TUESDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(21, 0)), schedule.get(DayOfWeek.WEDNESDAY));
+    assertEquals(new DailySchedule(LocalTime.of(13, 0), LocalTime.of(21, 30)), schedule.get(DayOfWeek.THURSDAY));
+    assertEquals(new DailySchedule(LocalTime.of(14, 0), LocalTime.of(22, 0)), schedule.get(DayOfWeek.FRIDAY));
+    assertEquals(new DailySchedule(LocalTime.of(15, 0), LocalTime.of(22, 30)), schedule.get(DayOfWeek.SATURDAY));
+    assertEquals(new DailySchedule(LocalTime.of(16, 0), LocalTime.of(23, 0)), schedule.get(DayOfWeek.SUNDAY));
+  }
+
 
   @Test
   void invalidSingleDayOrRangeInput() {

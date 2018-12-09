@@ -4,16 +4,20 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 public class OpeningHours {
   private final Parser parser;
+  private final LocalizedTokens localizedTokens;
 
   public OpeningHours() {
-    this(Grammars.defaultGrammar());
+    this(Grammars.defaultGrammar(), Locale.ENGLISH);
   }
 
-  public OpeningHours(final List<Rule> grammar) {
+  public OpeningHours(final List<Rule> grammar, final Locale locale) {
     parser = new Parser(grammar);
+    localizedTokens = new LocalizedTokens(locale);
   }
 
   public List<Token> tokenize(final String input) {
@@ -22,8 +26,9 @@ public class OpeningHours {
     int startingPosition = 0;
     for (int i = 1; i <= input.length(); i++) {
       final String candidate = input.substring(startingPosition, i);
-      if (LocalizedTokens.match(candidate).isPresent()) {
-        tokens.add(LocalizedTokens.match(candidate).get());
+      final Optional<Token> optionalToken = localizedTokens.match(candidate);
+      if (optionalToken.isPresent()) {
+        tokens.add(optionalToken.get());
         startingPosition = i;
       }
     }
