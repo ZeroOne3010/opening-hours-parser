@@ -1,5 +1,7 @@
 package com.github.zeroone3010.openinghoursparser;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,5 +65,39 @@ public class OpeningHours {
     return parser.validate(tokens);
   }
 
+  public WeeklySchedule compile(final List<Token> tokens) {
+    final WeeklySchedule.Builder builder = WeeklySchedule.builder();
+
+    DayOfWeek dayOfWeekRangeStart = null;
+    DayOfWeek dayOfWeekRangeEnd = null;
+    LocalTime timeRangeStart = null;
+    LocalTime timeRangeEnd = null;
+    for (final Token token : tokens) {
+      if (token.getType().isWeekday()) {
+        if (dayOfWeekRangeStart == null) {
+          dayOfWeekRangeStart = token.getType().asDayOfWeek();
+          dayOfWeekRangeEnd = token.getType().asDayOfWeek();
+        } else {
+          dayOfWeekRangeEnd = token.getType().asDayOfWeek();
+        }
+      } else if (token.getType().equals(TokenType.TIME)) {
+        if (timeRangeStart == null) {
+          timeRangeStart = LocalTime.parse(token.getValue());
+        } else {
+          timeRangeEnd = LocalTime.parse(token.getValue());
+
+          for (int i = dayOfWeekRangeStart.getValue(); i <= dayOfWeekRangeEnd.getValue(); i++) {
+            builder.add(DayOfWeek.of(i), new DailySchedule(timeRangeStart, timeRangeEnd));
+          }
+
+          dayOfWeekRangeStart = null;
+          dayOfWeekRangeEnd = null;
+          timeRangeStart = null;
+          timeRangeEnd = null;
+        }
+      }
+    }
+    return builder.build();
+  }
 }
 

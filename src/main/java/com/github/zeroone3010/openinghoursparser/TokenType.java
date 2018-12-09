@@ -35,6 +35,13 @@ enum TokenType {
     return Arrays.asList(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).contains(this);
   }
 
+  public DayOfWeek asDayOfWeek() {
+    if (!isWeekday()) {
+      throw new IllegalStateException(this + " is not a day of week.");
+    }
+    return DayOfWeek.valueOf(this.name());
+  }
+
   public static TokenType getStartSymbol() {
     return OPENING_HOURS;
   }

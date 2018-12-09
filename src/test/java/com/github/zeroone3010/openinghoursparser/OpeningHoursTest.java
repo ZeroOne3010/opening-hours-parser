@@ -2,6 +2,8 @@ package com.github.zeroone3010.openinghoursparser;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OpeningHoursTest {
   @Test
-  void tokenizeAndValidate_withOnlyOneSingleDay() {
+  void oneSingleDay() {
     final OpeningHours openingHours = new OpeningHours();
     final List<Token> result = openingHours.tokenize("Mon 10:00-18:00");
     assertEquals(Arrays.asList(
@@ -22,10 +24,19 @@ class OpeningHoursTest {
     ), result);
 
     assertTrue(openingHours.validate(result).isValid());
+
+    final WeeklySchedule schedule = openingHours.compile(result);
+    assertEquals(new DailySchedule(LocalTime.of(10, 0), LocalTime.of(18, 0)), schedule.get(DayOfWeek.MONDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.TUESDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.WEDNESDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.THURSDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.FRIDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.SATURDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.SUNDAY));
   }
 
   @Test
-  void tokenizeAndValidate_withTwoSingleDays() {
+  void twoSingleDays() {
     final OpeningHours openingHours = new OpeningHours();
     final List<Token> result = openingHours.tokenize("Mon 10:00-18:00, Tue 12:00-20:00");
     assertEquals(Arrays.asList(
@@ -41,10 +52,19 @@ class OpeningHoursTest {
     ), result);
 
     assertTrue(openingHours.validate(result).isValid());
+
+    final WeeklySchedule schedule = openingHours.compile(result);
+    assertEquals(new DailySchedule(LocalTime.of(10, 0), LocalTime.of(18, 0)), schedule.get(DayOfWeek.MONDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.TUESDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.WEDNESDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.THURSDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.FRIDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.SATURDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.SUNDAY));
   }
 
   @Test
-  void tokenizeAndValidate_withOneSingleDayAndDayRange() {
+  void oneSingleDayAndDayRange() {
     final OpeningHours openingHours = new OpeningHours();
     final List<Token> result = openingHours.tokenize("Mon 10:00-18:00, Tue-Sun 12:00-20:00");
     assertEquals(Arrays.asList(
@@ -62,10 +82,19 @@ class OpeningHoursTest {
     ), result);
 
     assertTrue(openingHours.validate(result).isValid());
+
+    final WeeklySchedule schedule = openingHours.compile(result);
+    assertEquals(new DailySchedule(LocalTime.of(10, 0), LocalTime.of(18, 0)), schedule.get(DayOfWeek.MONDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.TUESDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.WEDNESDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.THURSDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.FRIDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.SATURDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.SUNDAY));
   }
 
   @Test
-  void tokenizeAndValidate_withTwoDayRanges() {
+  void twoDayRanges() {
     final OpeningHours openingHours = new OpeningHours();
     final List<Token> result = openingHours.tokenize("Mon-Wed 10:00-18:00, Thu-Sun 12:00-20:00");
     assertEquals(Arrays.asList(
@@ -85,10 +114,19 @@ class OpeningHoursTest {
     ), result);
 
     assertTrue(openingHours.validate(result).isValid());
+
+    final WeeklySchedule schedule = openingHours.compile(result);
+    assertEquals(new DailySchedule(LocalTime.of(10, 0), LocalTime.of(18, 0)), schedule.get(DayOfWeek.MONDAY));
+    assertEquals(new DailySchedule(LocalTime.of(10, 0), LocalTime.of(18, 0)), schedule.get(DayOfWeek.TUESDAY));
+    assertEquals(new DailySchedule(LocalTime.of(10, 0), LocalTime.of(18, 0)), schedule.get(DayOfWeek.WEDNESDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.THURSDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.FRIDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.SATURDAY));
+    assertEquals(new DailySchedule(LocalTime.of(12, 0), LocalTime.of(20, 0)), schedule.get(DayOfWeek.SUNDAY));
   }
 
   @Test
-  void tokenizeAndValidate_withOneRange() {
+  void oneRange() {
     final OpeningHours openingHours = new OpeningHours();
     final List<Token> result = openingHours.tokenize("Fri-Sun 09:00-22:00");
     assertEquals(Arrays.asList(
@@ -101,10 +139,19 @@ class OpeningHoursTest {
     ), result);
 
     assertTrue(openingHours.validate(result).isValid());
+
+    final WeeklySchedule schedule = openingHours.compile(result);
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.MONDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.TUESDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.WEDNESDAY));
+    assertEquals(DailySchedule.closed(), schedule.get(DayOfWeek.THURSDAY));
+    assertEquals(new DailySchedule(LocalTime.of(9, 0), LocalTime.of(22, 0)), schedule.get(DayOfWeek.FRIDAY));
+    assertEquals(new DailySchedule(LocalTime.of(9, 0), LocalTime.of(22, 0)), schedule.get(DayOfWeek.SATURDAY));
+    assertEquals(new DailySchedule(LocalTime.of(9, 0), LocalTime.of(22, 0)), schedule.get(DayOfWeek.SUNDAY));
   }
 
   @Test
-  void tokenizeAndValidate_withOneRange_withSpaces() {
+  void oneRange_withSpaces() {
     final OpeningHours openingHours = new OpeningHours();
     final List<Token> result = openingHours.tokenize(" Fri -  Sun   09:00  - 22:00  ");
     assertEquals(Arrays.asList(
@@ -120,7 +167,7 @@ class OpeningHoursTest {
   }
 
   @Test
-  void tokenizeAndValidate_invalidSingleDayOrRangeInput() {
+  void invalidSingleDayOrRangeInput() {
     final OpeningHours openingHours = new OpeningHours();
     assertFalse(openingHours.validate(openingHours.tokenize("-")).isValid());
     assertFalse(openingHours.validate(openingHours.tokenize("- ")).isValid());
