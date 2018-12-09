@@ -22,8 +22,8 @@ public class OpeningHours {
     int startingPosition = 0;
     for (int i = 1; i <= input.length(); i++) {
       final String candidate = input.substring(startingPosition, i);
-      if (Token.match(candidate).isPresent()) {
-        tokens.add(Token.match(candidate).get());
+      if (LocalizedTokens.match(candidate).isPresent()) {
+        tokens.add(LocalizedTokens.match(candidate).get());
         startingPosition = i;
       }
     }
