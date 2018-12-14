@@ -2,9 +2,16 @@ package com.github.zeroone3010.openinghoursparser;
 
 public final class ValidationResult {
   private final boolean valid;
+  private final String explanation;
 
   public ValidationResult(final boolean valid) {
     this.valid = valid;
+    this.explanation = null;
+  }
+
+  public ValidationResult(final boolean valid, final String explanation) {
+    this.valid = valid;
+    this.explanation = explanation;
   }
 
   public boolean isValid() {
@@ -27,6 +34,6 @@ public final class ValidationResult {
 
   @Override
   public String toString() {
-    return "ValidationResult{" + valid + '}';
+    return "ValidationResult{" + valid + (explanation != null ? ", " + explanation : "") + '}';
   }
 }

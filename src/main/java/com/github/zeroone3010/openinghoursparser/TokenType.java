@@ -7,7 +7,8 @@ enum TokenType {
   WEEKDAY(false), TIME(true), RANGE_INDICATOR(true), WHITE_SPACE(true),
   OPENING_HOURS(false), WEEKDAY_EXPRESSION(false), TIME_RANGE(false), WEEKDAY_RANGE(false),
   SCHEDULE(false), MORE_SCHEDULES(false), SCHEDULE_SEPARATOR(true), END_OF_INPUT(true), EMPTY(true),
-  MONDAY(true), TUESDAY(true), WEDNESDAY(true), THURSDAY(true), FRIDAY(true), SATURDAY(true), SUNDAY(true);
+  MONDAY(true), TUESDAY(true), WEDNESDAY(true), THURSDAY(true), FRIDAY(true), SATURDAY(true), SUNDAY(true),
+  UNKNOWN(true);
 
   private final boolean terminal;
 
@@ -33,6 +34,10 @@ enum TokenType {
 
   public boolean isWeekday() {
     return Arrays.asList(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).contains(this);
+  }
+
+  public boolean isUnknown() {
+    return this == UNKNOWN;
   }
 
   public DayOfWeek asDayOfWeek() {

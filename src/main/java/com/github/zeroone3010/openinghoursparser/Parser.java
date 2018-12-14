@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.Predicate;
@@ -33,6 +34,15 @@ final class Parser {
 
   public ValidationResult validate(final List<Token> tokens) {
     final List<TokenType> input = tokens.stream().map(Token::getType).collect(Collectors.toList());
+    if (input.isEmpty()) {
+      return new ValidationResult(true);
+    }
+    final Optional<Token> unknownTokem = tokens.stream().filter(t -> t.getType().isUnknown()).findFirst();
+
+    if (unknownTokem.isPresent()) {
+      return new ValidationResult(false, "Unknown token '" + unknownTokem.get().getValue() + "'");
+    }
+
     if (!input.get(input.size() - 1).isEndOfInput()) {
       input.add(TokenType.END_OF_INPUT);
     }

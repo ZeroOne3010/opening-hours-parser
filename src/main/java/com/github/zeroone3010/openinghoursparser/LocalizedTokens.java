@@ -2,13 +2,13 @@ package com.github.zeroone3010.openinghoursparser;
 
 import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 final class LocalizedTokens {
-  private final Map<String, TokenType> tokens = new HashMap<>();
+  private final Map<String, TokenType> tokens = new LinkedHashMap<>();
 
   /**
    * Creates a LocalizedTokens instance for English names of the days of the week.
@@ -36,6 +36,7 @@ final class LocalizedTokens {
     tokens.put("\\d\\d:\\d\\d", TokenType.TIME);
     tokens.put("\\s", TokenType.WHITE_SPACE);
     tokens.put(",", TokenType.SCHEDULE_SEPARATOR);
+    tokens.put(".+\\s", TokenType.UNKNOWN);
   }
 
 

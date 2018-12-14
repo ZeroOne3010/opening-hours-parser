@@ -183,7 +183,6 @@ class OpeningHoursTest {
     assertEquals(new DailySchedule(LocalTime.of(16, 0), LocalTime.of(23, 0)), schedule.get(DayOfWeek.SUNDAY));
   }
 
-
   @Test
   void invalidSingleDayOrRangeInput() {
     final OpeningHours openingHours = new OpeningHours();
@@ -204,6 +203,38 @@ class OpeningHoursTest {
     assertFalse(openingHours.validate(openingHours.tokenize("Mon - Tue 10:00 - Wed")).isValid());
     assertFalse(openingHours.validate(openingHours.tokenize("Mon - 12:00 13:00 - 14:00")).isValid());
     assertFalse(openingHours.validate(openingHours.tokenize("10:00 - Mon 13:00 - 14:00")).isValid());
+  }
+
+  @Test
+  void invalidMultiDayInput() {
+    final OpeningHours openingHours = new OpeningHours();
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Tue 10:00-12:00, Wed")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Tue 10:00-12:00, Wed -")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Tue 10:00-12:00, Wed - Fri")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Tue 10:00-12:00, Wed - Fri 08:00")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Tue 10:00-12:00, Wed - Fri 08:00-")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Tue 10:00-, Wed - Fri 08:00-20:00")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Tue -10:00, Wed - Fri 08:00-20:00")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon- -10:00, Wed - Fri 08:00-20:00")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("-Tue 08:00-10:00, Wed - Fri 08:00-20:00")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Tue Mon-Tue, Mon-Tue Mon-Tue")).isValid());
+  }
+
+  @Test
+  void invalidInput() {
+    final OpeningHours openingHours = new OpeningHours();
+    assertFalse(openingHours.validate(openingHours.tokenize("Foo")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Foo ")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Foo  ")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Bar 10:00-12:00")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Baz Mon-Sun 10:00-12:00")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon foo-12:00")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon 12:00-quux")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon 12:00-13:00, zok")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("12:00-13:00, baz")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Sun 10:00-19:00 (except on Fridays)")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Sun 10:00-19:00 something")).isValid());
+    assertFalse(openingHours.validate(openingHours.tokenize("Mon-Fri 10:00-19:00 (closed next week), Sat-Sun 12:00-16:00")).isValid());
   }
 
 }

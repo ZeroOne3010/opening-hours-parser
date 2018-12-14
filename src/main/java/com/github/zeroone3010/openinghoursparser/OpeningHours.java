@@ -30,6 +30,8 @@ public class OpeningHours {
       if (optionalToken.isPresent()) {
         tokens.add(optionalToken.get());
         startingPosition = i;
+      } else if (i == input.length()) {
+        tokens.add(new Token(TokenType.UNKNOWN, candidate));
       }
     }
     tokens.removeIf(token -> token.getType().equals(TokenType.WHITE_SPACE));
