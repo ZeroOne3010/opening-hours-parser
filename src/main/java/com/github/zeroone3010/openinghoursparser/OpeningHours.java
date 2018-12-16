@@ -11,15 +11,29 @@ public class OpeningHours {
   private final Parser parser;
   private final LocalizedTokens localizedTokens;
 
+  /**
+   * Initializes an OpeningHours parser with the {@link Grammars#defaultGrammar()} and English day names.
+   */
   public OpeningHours() {
     this(Grammars.defaultGrammar(), Locale.ENGLISH);
   }
 
+
+  /**
+   * Initializes an OpeningHours parser with the given grammar and day names in the given {@link java.util.Locale}.
+   */
   public OpeningHours(final List<Rule> grammar, final Locale locale) {
     parser = new Parser(grammar);
     localizedTokens = new LocalizedTokens(locale);
   }
 
+  /**
+   * Parses the given String into a List of {@link Token}s, which can then be compiled into an accessible form
+   * with the {@link #compile(List)} method.
+   *
+   * @param input A String of opening times, such as "Mon-Fri 08:00-20:00, Sat-Sun 10:00-18:00".
+   * @return A List of typed {@link Token}s, such as "Mon", "-", "Fri" "08:00", "-", "20:00", ",", etc.
+   */
   public List<Token> tokenize(final String input) {
     System.out.println("Input: '" + input + "'");
     final List<Token> tokens = new ArrayList<>();
@@ -38,10 +52,22 @@ public class OpeningHours {
     return tokens;
   }
 
+  /**
+   * Validates the given List of {@link Token}s.
+   *
+   * @param tokens A List of Tokens, as parsed by the {@link #tokenize(String)} method.
+   * @return A {@link ValidationResult} telling whether or not this list of Tokens
+   * represents a proper opening hours definition.
+   */
   public ValidationResult validate(final List<Token> tokens) {
     return parser.validate(tokens);
   }
 
+  /**
+   * Convert the List of parsed {@link Token}s into a proper end result, a {@link WeeklySchedule} object.
+   * @param tokens List of schedule grammar tokens, as parsed by the {@link #tokenize(String)} method.
+   * @return A {@link WeeklySchedule} object, with the data of the given tokens in an accessible form.
+   */
   public WeeklySchedule compile(final List<Token> tokens) {
     final WeeklySchedule.Builder builder = WeeklySchedule.builder();
 

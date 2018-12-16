@@ -10,23 +10,28 @@ public final class Grammars {
     // prevent instantiation
   }
 
+  /**
+   * Represents the opening hours grammar determined by the following Backus-Naur form notation:
+   *
+   * OpeningHours -> Schedule
+   * Schedule -> WeekdayExpression TimeRange MoreSchedules
+   * MoreSchedules -> schedule_separator Schedule
+   * MoreSchedules -> ε
+   * WeekdayExpression -> Weekday WeekdayRange
+   * Weekday -> monday
+   * Weekday -> tuesday
+   * Weekday -> wednesday
+   * Weekday -> thursday
+   * Weekday -> friday
+   * Weekday -> saturday
+   * Weekday -> sunday
+   * WeekdayRange -> range_indicator Weekday
+   * WeekdayRange -> ε
+   * TimeRange -> time range_indicator time
+   *
+   * @return List of {@link Rule}s for a default opening hours grammar.
+   */
   public static List<Rule> defaultGrammar() {
-    // OpeningHours -> Schedule
-    // Schedule -> WeekdayExpression TimeRange MoreSchedules
-    // MoreSchedules -> schedule_separator Schedule
-    // MoreSchedules -> ε
-    // WeekdayExpression -> Weekday WeekdayRange
-    // Weekday -> monday
-    // Weekday -> tuesday
-    // Weekday -> wednesday
-    // Weekday -> thursday
-    // Weekday -> friday
-    // Weekday -> saturday
-    // Weekday -> sunday
-    // WeekdayRange -> range_indicator Weekday
-    // WeekdayRange -> ε
-    // TimeRange -> time range_indicator time
-
     final List<Rule> grammar = new ArrayList<>();
     grammar.add(new Rule(TokenType.OPENING_HOURS, asList(TokenType.SCHEDULE)));
     grammar.add(new Rule(TokenType.SCHEDULE, asList(TokenType.WEEKDAY_EXPRESSION, TokenType.TIME_RANGE, TokenType.MORE_SCHEDULES)));
