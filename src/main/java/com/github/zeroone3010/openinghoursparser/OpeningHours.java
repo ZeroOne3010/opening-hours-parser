@@ -48,7 +48,6 @@ public class OpeningHours {
     DayOfWeek dayOfWeekRangeStart = null;
     DayOfWeek dayOfWeekRangeEnd = null;
     LocalTime timeRangeStart = null;
-    LocalTime timeRangeEnd = null;
     for (final Token token : tokens) {
       if (token.getType().isWeekday()) {
         if (dayOfWeekRangeStart == null) {
@@ -61,7 +60,7 @@ public class OpeningHours {
         if (timeRangeStart == null) {
           timeRangeStart = LocalTime.parse(token.getValue());
         } else {
-          timeRangeEnd = LocalTime.parse(token.getValue());
+          final LocalTime timeRangeEnd = LocalTime.parse(token.getValue());
 
           for (int i = dayOfWeekRangeStart.getValue(); i <= dayOfWeekRangeEnd.getValue(); i++) {
             builder.add(DayOfWeek.of(i), new DailySchedule(timeRangeStart, timeRangeEnd));
@@ -70,7 +69,6 @@ public class OpeningHours {
           dayOfWeekRangeStart = null;
           dayOfWeekRangeEnd = null;
           timeRangeStart = null;
-          timeRangeEnd = null;
         }
       }
     }
