@@ -119,3 +119,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Gradle build dir
+build
